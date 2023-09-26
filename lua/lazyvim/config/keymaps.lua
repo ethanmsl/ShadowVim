@@ -15,6 +15,14 @@ local function map(mode, lhs, rhs, opts)
   end
 end
 
+-- NOTE: TEST change to diferanteiate `shadow-transformation` branch from main branch (of LazyVim fork)
+map(
+  { "n" },
+  "<leader>t",
+  ":NoiceStats<enter>",
+  { noremap = true, silent = true, desc = "shadow-transformation branch test: NoiceStats" }
+)
+
 -- better up/down
 map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 map({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
