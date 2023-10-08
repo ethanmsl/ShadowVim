@@ -1,19 +1,9 @@
 -- This file is automatically loaded by lazyvim.config.init
 local Util = require("lazyvim.util")
 
-local function map(mode, lhs, rhs, opts)
-  local keys = require("lazy.core.handler").handlers.keys
-  ---@cast keys LazyKeysHandler
-  -- do not create the keymap if a lazy keys handler exists
-  if not keys.active[keys.parse({ lhs, mode = mode }).id] then
-    opts = opts or {}
-    opts.silent = opts.silent ~= false
-    if opts.remap and not vim.g.vscode then
-      opts.remap = nil
-    end
-    vim.keymap.set(mode, lhs, rhs, opts)
-  end
-end
+-- DO NOT USE THIS IN YOU OWN CONFIG!!
+-- use `vim.keymap.set` instead
+local map = Util.safe_keymap_set
 
 -- NOTE: TEST change to diferanteiate `shadow-transformation` branch from main branch (of LazyVim fork)
 map(
@@ -111,12 +101,18 @@ if not Util.has("trouble.nvim") then
   map("n", "]q", vim.cmd.cnext, { desc = "Next quickfix" })
 end
 
+-- formatting
+map({ "n", "v" }, "<leader>cf", function()
+  require("lazyvim.plugins.lsp.format").format({ force = true })
+end, { desc = "Format" })
+
 -- stylua: ignore start
 
 -- toggle options
 map("n", "<leader>uf", require("lazyvim.plugins.lsp.format").toggle, { desc = "Toggle format on Save" })
 map("n", "<leader>us", function() Util.toggle("spell") end, { desc = "Toggle Spelling" })
 map("n", "<leader>uw", function() Util.toggle("wrap") end, { desc = "Toggle Word Wrap" })
+map("n", "<leader>uL", function() Util.toggle("relativenumber") end, { desc = "Toggle Relative Line Numbers" })
 map("n", "<leader>ul", function() Util.toggle_number() end, { desc = "Toggle Line Numbers" })
 map("n", "<leader>ud", Util.toggle_diagnostics, { desc = "Toggle Diagnostics" })
 local conceallevel = vim.o.conceallevel > 0 and vim.o.conceallevel or 3
@@ -133,9 +129,7 @@ map("n", "<leader>gG", function() Util.float_term({ "lazygit" }, {esc_esc = fals
 map("n", "<leader>qq", "<cmd>qa<cr>", { desc = "Quit all" })
 
 -- highlights under cursor
-if vim.fn.has("nvim-0.9.0") == 1 then
-  map("n", "<leader>ui", vim.show_pos, { desc = "Inspect Pos" })
-end
+map("n", "<leader>ui", vim.show_pos, { desc = "Inspect Pos" })
 
 -- LazyVim Changelog
 map("n", "<leader>L", Util.changelog, {desc = "LazyVim Changelog"})

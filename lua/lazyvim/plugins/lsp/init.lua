@@ -2,7 +2,7 @@ return {
   -- lspconfig
   {
     "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" },
+    event = "LazyFile",
     dependencies = {
       { "folke/neoconf.nvim", cmd = "Neoconf", config = false, dependencies = { "nvim-lspconfig" } },
       { "folke/neodev.nvim", opts = {} },
@@ -41,9 +41,6 @@ return {
       capabilities = {},
       -- Automatically format on save
       autoformat = true,
-      -- Enable this to show formatters used in a notification
-      -- Useful for debugging formatter issues
-      format_notify = false,
       -- options for vim.lsp.buf.format
       -- `bufnr` and `filter` is handled by the LazyVim formatter,
       -- but can be also overridden when specified
@@ -54,12 +51,11 @@ return {
       -- LSP Server Settings
       ---@type lspconfig.options
       servers = {
-        jsonls = {},
         lua_ls = {
           -- mason = false, -- set to false if you don't want this server to be installed with mason
           -- Use this to add any additional keymaps
           -- for specific lsp servers
-          ---@type LazyKeys[]
+          ---@type LazyKeysSpec[]
           -- keys = {},
           settings = {
             Lua = {
@@ -123,7 +119,7 @@ return {
 
       if opts.inlay_hints.enabled and inlay_hint then
         Util.on_attach(function(client, buffer)
-          if client.supports_method('textDocument/inlayHint') then
+          if client.supports_method("textDocument/inlayHint") then
             inlay_hint(buffer, true)
           end
         end)
@@ -206,8 +202,8 @@ return {
 
   -- formatters
   {
-    "jose-elias-alvarez/null-ls.nvim",
-    event = { "BufReadPre", "BufNewFile" },
+    "nvimtools/none-ls.nvim",
+    event = "LazyFile",
     dependencies = { "mason.nvim" },
     opts = function()
       local nls = require("null-ls")

@@ -8,7 +8,8 @@ return {
     end,
   },
   {
-    "jose-elias-alvarez/null-ls.nvim",
+    "nvimtools/none-ls.nvim",
+    optional = true,
     opts = function(_, opts)
       local nls = require("null-ls")
       opts.sources = opts.sources or {}
@@ -16,6 +17,15 @@ return {
         nls.builtins.diagnostics.cmake_lint,
       })
     end,
+  },
+  {
+    "mfussenegger/nvim-lint",
+    optional = true,
+    opts = {
+      linters_by_ft = {
+        cmake = { "cmakelint" },
+      },
+    },
   },
   {
     "mason.nvim",
@@ -35,6 +45,6 @@ return {
   {
     "Civitasv/cmake-tools.nvim",
     opts = {},
-    event = "BufRead",
+    event = "LazyFile",
   },
 }

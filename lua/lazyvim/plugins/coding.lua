@@ -67,12 +67,12 @@ return {
             select = true,
           }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
         }),
-        sources = cmp.config.sources({
-          { name = "nvim_lsp" },
-          { name = "luasnip" },
-          { name = "buffer" },
-          { name = "path" },
-        }),
+        sources = {
+          { name = "nvim_lsp", group_index = 1 },
+          { name = "luasnip", group_index = 1 },
+          { name = "buffer", group_index = 2 },
+          { name = "path", group_index = 2 },
+        },
         formatting = {
           format = function(_, item)
             local icons = require("lazyvim.config").icons.kinds
@@ -97,6 +97,21 @@ return {
     "echasnovski/mini.pairs",
     event = "VeryLazy",
     opts = {},
+    keys = {
+      {
+        "<leader>up",
+        function()
+          local Util = require("lazy.core.util")
+          vim.g.minipairs_disable = not vim.g.minipairs_disable
+          if vim.g.minipairs_disable then
+            Util.warn("Disabled auto pairs", { title = "Option" })
+          else
+            Util.info("Enabled auto pairs", { title = "Option" })
+          end
+        end,
+        desc = "Toggle auto pairs",
+      },
+    },
   },
 
   -- Fast and feature-rich surround actions. For text that includes
@@ -125,19 +140,25 @@ return {
     end,
     opts = {
       mappings = {
-        add = "gza", -- Add surrounding in Normal and Visual modes
-        delete = "gzd", -- Delete surrounding
-        find = "gzf", -- Find surrounding (to the right)
-        find_left = "gzF", -- Find surrounding (to the left)
-        highlight = "gzh", -- Highlight surrounding
-        replace = "gzr", -- Replace surrounding
-        update_n_lines = "gzn", -- Update `n_lines`
+        add = "gsa", -- Add surrounding in Normal and Visual modes
+        delete = "gsd", -- Delete surrounding
+        find = "gsf", -- Find surrounding (to the right)
+        find_left = "gsF", -- Find surrounding (to the left)
+        highlight = "gsh", -- Highlight surrounding
+        replace = "gsr", -- Replace surrounding
+        update_n_lines = "gsn", -- Update `n_lines`
       },
     },
   },
 
   -- comments
-  { "JoosepAlviste/nvim-ts-context-commentstring", lazy = true },
+  {
+    "JoosepAlviste/nvim-ts-context-commentstring",
+    lazy = true,
+    opts = {
+      enable_autocmd = false,
+    },
+  },
   {
     "echasnovski/mini.comment",
     event = "VeryLazy",
@@ -158,7 +179,6 @@ return {
     --   { "i", mode = { "x", "o" } },
     -- },
     event = "VeryLazy",
-    dependencies = { "nvim-treesitter-textobjects" },
     opts = function()
       local ai = require("mini.ai")
       return {
@@ -170,6 +190,7 @@ return {
           }, {}),
           f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }, {}),
           c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }, {}),
+          t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" },
         },
       }
     end,
